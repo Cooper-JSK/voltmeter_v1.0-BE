@@ -8,6 +8,7 @@ exports.getData = async (req, res) => {
     console.log(`Received request for session ID: ${sessionId}`);
 
     try {
+        // Find the session by ID
         const session = await Session.findById(sessionId);
         if (!session) {
             console.log('Session not found');
@@ -15,10 +16,13 @@ exports.getData = async (req, res) => {
         }
         console.log(`Session found: ${session.collectionName}`);
 
+        // Access the collection associated with this session
         const collection = mongoose.connection.collection(session.collectionName);
-        const data = await collection.find().sort({ timestamp: -1 }).limit(10).toArray();
 
-        console.log(`Data retrieved: ${JSON.stringify(data)}`);
+        // Retrieve all data sorted by timestamp
+        const data = await collection.find().sort({ createdAt: 1 }).toArray();
+
+        console.log(`Data retrieved: ${data.length} records`);
         res.json(data);
     } catch (err) {
         console.error('Error retrieving data:', err);

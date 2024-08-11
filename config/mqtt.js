@@ -4,6 +4,7 @@ const fs = require('fs');
 const mongoose = require('mongoose');
 require('dotenv').config();
 
+
 // MQTT client options
 const options = {
     cert: fs.readFileSync(process.env.CERT_PATH),
@@ -31,8 +32,6 @@ client.on('connect', () => {
     });
 });
 
-// Integrate socket.io to emit messages to the frontend
-const io = require('socket.io')(require('http').createServer()); // Socket.io instance
 
 client.on('message', async (topic, message) => {
     if (!activeSessionId) {
@@ -56,8 +55,7 @@ client.on('message', async (topic, message) => {
 
         console.log(`Data saved to session collection (${session.collectionName}):`, data);
 
-        // Emit the data to the frontend via socket.io
-        io.emit('newData', data);
+
 
     } catch (err) {
         console.error('Error processing MQTT message:', err);
